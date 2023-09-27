@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+  db:
+    image: postgres
+    container_name: postgres_ig
+    restart: always
+    environment:
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: anbui
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: instagram_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/pgsql:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "anbui", "-d", "instagram_db"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    networks:
+      - network
+
+  migrate:
+    image: migrate/migrate:v4.15.2
+    container_name: migrate_ig
+    # profiles: ["tools"]
+    volumes:
+      - ./db/migrations:/migrations
+    entrypoint:
+      [
+        "migrate",
+        "-path",
+        "/migrations",
+        "-database",
+        "postgres://anbui:1234@db:5432/instagram_db?sslmode=disable",
+      ]
+    command: ["up"]
+    depends_on:
+      - db
+    restart: on-failure
+    networks:
+      - network
+
+networks:
+  network:

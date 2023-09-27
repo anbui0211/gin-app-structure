@@ -1,0 +1,25 @@
+basePath: /api/v1
+host: localhost:9000
+info:
+  contact:
+    name: Bui Phu An
+  title: Golang Project
+  version: "1.0"
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      operationId: ping
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Ping
+      tags:
+      - Common
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
